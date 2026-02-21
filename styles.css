@@ -1,0 +1,309 @@
+/* Global Styles */
+:root {
+  --bg-color: #0a0a0a;
+  --primary-color: #00bfa5;
+  /* teal accent */
+  --secondary-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --font-family: 'Inter', 'SimHei', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: var(--text-color);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-nav {
+  display: flex;
+  background: var(--secondary-color);
+  padding: 0.5rem;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.tab-nav button {
+  background: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.tab-nav button:hover,
+.tab-nav button.active {
+  background: var(--primary-color);
+  color: var(--bg-color);
+}
+
+.lesson-nav {
+  display: flex;
+  background: var(--bg-color);
+  padding: 0.5rem;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.lesson-nav button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-color);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.lesson-nav button:hover,
+.lesson-nav button.active {
+  background: rgba(0, 191, 165, 0.2);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+#app-root {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Card Component */
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  max-width: 450px;
+  margin: 3rem auto;
+  text-align: center;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+}
+
+.card h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.card button {
+  margin-top: 1rem;
+  background: var(--primary-color);
+  border: none;
+  color: var(--bg-color);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+/* Flip Card Styles */
+.flip-card {
+  perspective: 1000px;
+  width: 100%;
+  max-width: 450px;
+  height: 300px;
+  /* Fixed height for consistent flipping */
+  margin: 3rem auto;
+  cursor: pointer;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  /* Reuse card glassy styling */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.flip-card-front {
+  transform: rotateY(0deg);
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+  background: rgba(0, 191, 165, 0.05);
+  /* Slight tint for back */
+}
+
+/* Quiz Styles */
+.quiz-input {
+  width: 100%;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+  border-radius: 0.8rem;
+  font-size: 1.2rem;
+  text-align: center;
+  transition: border-color 0.3s ease;
+}
+
+.quiz-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.quiz-feedback {
+  margin-top: 1rem;
+  font-weight: bold;
+  height: 1.5rem;
+}
+
+.feedback-correct {
+  color: #4caf50;
+}
+
+.feedback-wrong {
+  color: #f44336;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.quiz-options button {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+  width: 100%;
+  padding: 1rem;
+  border-radius: 0.8rem;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.quiz-options button:hover {
+  background: rgba(0, 191, 165, 0.2);
+  border-color: var(--primary-color);
+  transform: scale(1.02);
+}
+
+/* Canvas Layout for New Quizzes */
+.quiz-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.canvas-container {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px dotted rgba(255, 255, 255, 0.3);
+  border-radius: 0.8rem;
+  position: relative;
+  overflow: hidden;
+  height: 200px;
+  width: 100%;
+}
+
+.draw-canvas {
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 50% 50%;
+  background-position: center center;
+}
+
+.canvas-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.canvas-controls button {
+  background: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 0.3rem 0.8rem;
+  border-radius: 0.3rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin: 0;
+}
+
+.canvas-controls button:hover {
+  background: var(--primary-color);
+  color: var(--bg-color);
+}
+
+/* Word List styles */
+.word-list-panel {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+}
+
+.word-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.word-list-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.word-list-item:last-child {
+  border-bottom: none;
+}
