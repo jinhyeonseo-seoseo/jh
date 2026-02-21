@@ -861,7 +861,7 @@ function renderPronunciationModule(container) {
       
       <div style="padding: 1.5rem; background: rgba(0,0,0,0.3); border-radius: 1rem; border: 1px solid rgba(255,255,255,0.1);">
           <p style="margin-bottom: 1rem; font-weight: bold;">직접 녹음해 보세요:</p>
-          <button id="start-record" style="width:100%; background:#f44336; padding: 1rem; font-size: 1.1rem; border-radius:2rem;">🎤 누르면서 녹음</button>
+          <button id="start-record" style="width:100%; background:#f44336; padding: 1rem; font-size: 1.1rem; border-radius:2rem;">🎤 터치하여 말하기</button>
           <div id="pronounce-feedback" class="quiz-feedback" style="min-height:3rem; margin-top:1.5rem; font-size:1.2rem; font-family: 'SimHei', sans-serif;"></div>
           <div id="score-bar-container" style="display:none; width:100%; height:10px; background:rgba(255,255,255,0.1); border-radius:5px; margin-top:1rem; overflow:hidden;">
               <div id="score-bar" style="height:100%; width:0%; background:var(--primary-color); transition: width 0.5s ease;"></div>
@@ -892,28 +892,36 @@ function renderPronunciationModule(container) {
         };
 
         if (recognition) {
-            startRecordBtn.onmousedown = () => {
+            let isRecording = false;
+
+            const resetBtn = () => {
+                isRecording = false;
+                startRecordBtn.style.background = '#f44336';
+                startRecordBtn.textContent = '🎤 터치하여 말하기';
+            };
+
+            startRecordBtn.onclick = (e) => {
+                e.preventDefault();
+                if (isRecording) {
+                    try { recognition.stop(); } catch (e) { }
+                    resetBtn();
+                    return;
+                }
+
+                isRecording = true;
                 startRecordBtn.style.background = '#d32f2f';
-                startRecordBtn.textContent = 'Listening...';
+                startRecordBtn.textContent = '듣는 중... (종료 시 터치)';
                 feedback.textContent = '';
                 scoreBarContainer.style.display = 'none';
                 scoreText.style.display = 'none';
                 try {
                     recognition.start();
-                } catch (e) { }
+                } catch (e) {
+                    resetBtn();
+                }
             };
-            startRecordBtn.ontouchstart = (e) => { e.preventDefault(); startRecordBtn.onmousedown(); };
 
-            const stopListening = () => {
-                startRecordBtn.style.background = '#f44336';
-                startRecordBtn.textContent = '🎤 Hold to Speak';
-                try {
-                    recognition.stop();
-                } catch (e) { }
-            };
-            startRecordBtn.onmouseup = stopListening;
-            startRecordBtn.onmouseleave = stopListening;
-            startRecordBtn.ontouchend = stopListening;
+            recognition.onend = resetBtn;
 
             recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript.replace(/[.!?。！？\s]/g, '');
