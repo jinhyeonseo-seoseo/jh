@@ -904,8 +904,7 @@ function renderPronunciationModule(container) {
                 e.preventDefault();
                 if (isRecording) {
                     try { recognition.stop(); } catch (e) { }
-                    resetBtn();
-                    return;
+                    return; // resetBtn is handled by onend
                 }
 
                 isRecording = true;
@@ -914,11 +913,15 @@ function renderPronunciationModule(container) {
                 feedback.textContent = '';
                 scoreBarContainer.style.display = 'none';
                 scoreText.style.display = 'none';
-                try {
-                    recognition.start();
-                } catch (e) {
-                    resetBtn();
-                }
+
+                // Small delay to prevent Safari immediate abortion
+                setTimeout(() => {
+                    try {
+                        recognition.start();
+                    } catch (e) {
+                        resetBtn();
+                    }
+                }, 100);
             };
 
             recognition.onend = resetBtn;
@@ -955,8 +958,14 @@ function renderPronunciationModule(container) {
             };
 
             recognition.onerror = (event) => {
+                if (event.error === 'aborted' || event.error === 'no-speech') {
+                    // Ignore common non-critical errors
+                    resetBtn();
+                    return;
+                }
                 feedback.innerHTML = `Microphone error: ${event.error}. Please try again.`;
                 feedback.className = 'quiz-feedback feedback-wrong';
+                resetBtn();
             };
         } else {
             startRecordBtn.disabled = true;
