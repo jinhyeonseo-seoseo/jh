@@ -837,19 +837,26 @@ function renderPronunciationModule(container) {
     card.style.maxWidth = '600px';
     container.appendChild(card);
 
-    let recognition = null;
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.lang = 'zh-CN';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-    }
-
     let currentIndex = 0;
+    let currentRecognition = null;
 
     function loadQuestion() {
+        if (currentRecognition) {
+            try { currentRecognition.abort(); } catch (e) { }
+            currentRecognition = null;
+        }
+
         const word = lessonWords[currentIndex];
+
+        let recognition = null;
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'zh-CN';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            currentRecognition = recognition;
+        }
         card.innerHTML = `
       <div style="text-align:right; font-weight:bold; color:var(--primary-color); margin-bottom:1rem;">
           ${currentIndex + 1} / ${lessonWords.length}
@@ -914,14 +921,12 @@ function renderPronunciationModule(container) {
                 scoreBarContainer.style.display = 'none';
                 scoreText.style.display = 'none';
 
-                // Small delay to prevent Safari immediate abortion
-                setTimeout(() => {
-                    try {
-                        recognition.start();
-                    } catch (e) {
-                        resetBtn();
-                    }
-                }, 100);
+                try {
+                    // Start immediately to preserve mobile user-gesture context
+                    recognition.start();
+                } catch (e) {
+                    resetBtn();
+                }
             };
 
             recognition.onend = resetBtn;
